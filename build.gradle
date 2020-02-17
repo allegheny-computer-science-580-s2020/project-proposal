@@ -1,0 +1,32 @@
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+    mavenLocal()
+    dependencies {
+      // other options, only needed for local testing:
+      // classpath "org.gatored:gatorgradle:+"
+      // classpath "gradle.plugin.org.gatored:gatorgradle:+"
+      classpath "gradle.plugin.org.gatored:gatorgradle:0.4.4"
+    }
+  }
+}
+
+plugins {
+  id "org.gatored.gatorgradle" version "0.3.0"
+  id "java"
+}
+
+// declare the repositories that are used to meet dependencies
+repositories {
+  mavenLocal()
+  jcenter()
+  mavenCentral()
+}
+
+// specify the use of gradle version 4.9
+wrapper {
+  gradleVersion = '4.9'
+}
+

@@ -1,0 +1,65 @@
+# Latex
+before_install:
+- sudo apt-get -qq update && sudo apt-get install -y --no-install-recommends latexmk
+  texlive-fonts-extra texlive-fonts-recommended texlive-latex-base texlive-latex-extra
+  texlive-latex-recommended
+script:
+- mkdir _build
+- latexmk -pdf -outdir=_build src/SeniorThesisProposal.tex
+deploy:
+  provider: releases
+  api_key:
+    secure: pTrvwhewWU33nrXF3qYbzttpxKNvTT0gbqpk4PASs/dTmb3iIoOt86mZfdn7NOnhS2C6icjW01VH9/Wk+NWOK4n+zRpoqyKHEnBBg+kC7ht8RHCO7j1oZIeNVQcFlHxjjqBEAiDyistKoK0uQuHv7BEVpG557VbWFtf5Y48VL+mRAQC2D2IEQhtij0QJn2Dt84DOhdwdrrYVNYhtcdboioX9Z+6DD/D+S79ZkuPbUpsK8M3km9UeJplWZ9uoDhM3Wi0HN5CntREFTNMDsbywGic7N6PjKS+FZkf0155SkPJq3sPqIEZMtoHa+O+g4Qtconoh5iHeQhQOChPIq42JaikZ6D+ARrmVBLP5VMT/whYjIP3w4w8JbYbBJVVVXvALmPLYrg/sYFv4rfGPzjBy4Se6/uV49sB4CmGeo3vYrerP11OyH9PHSRWg/DPoARALg6vqNPViGXGf903Ixc6l3f7HXKK8j83gwkb7f+hkpCR6SAW+OEoeR5/PCe1gWluFKtsJPfka1IJ3pIZ85f8UNfwXEAzgc70B50YakKXpPKNRjiV2XVctHtXvCjX0lbhuZ/Vzpl2iXzM8U6LEzlgLpt6RZnfPkHwqW/g3ZwAlTJXPDd+reSM4ckoBoENlewm3J28RwwTD1fIOVg9BTFRModdhChRzkY9ouJoHJ3ueGPY=
+  file: _build/SeniorThesisProposal.pdf
+  skip_cleanup: true
+  on:
+    tags: true
+    
+# GG: use Java and non-root
+dist: trusty
+sudo: false
+language: Java
+jdk: oraclejdk8
+
+# ignore the virtualenv that Travis creates
+env:
+  global:
+    - PIPENV_VENV_IN_PROJECT=1
+    - PIPENV_IGNORE_VIRTUALENVS=1
+
+before_install:
+  # download gradle as a zip file
+  - wget https://services.gradle.org/distributions/gradle-4.6-bin.zip
+  - unzip -d $HOME gradle-4.6-bin.zip
+  # delete the downloaded file
+  - rm -rf gradle-4.6-bin.zip
+  # add gradle bin to path at the beginning to ensure it overwrites old gradle
+  - export PATH="$HOME/gradle-4.6/bin:$PATH"
+  # switch to Python 3.6.3 globally, install python dependencies
+  - pyenv global 3.6.3
+  - pip install --upgrade pip
+  - pip install pipenv
+  # do not allow Travis to use standard error for debugging purposes
+  - unset _JAVA_OPTIONS
+
+# cache to improve build speed
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.pip-cache/
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+# delete any cached version of GatorGrader and require a fresh installation
+before_script:
+  - rm -rf $HOME/.local/share/gatorgrader
+
+script:
+  # Java: see build.gradle for details about the build configuration
+  - gradle --version
+  - gradle clean
+  # GatorGrader: see config/gatorgrader.yml for details about all checks;
+  # not that grading skips the build task since submitted code may not build
+  - gradle grade -x build
