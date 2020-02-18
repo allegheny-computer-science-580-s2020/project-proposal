@@ -1,5 +1,5 @@
 ---
-name: cs580s2020_lab01
+name: cs580s2020_project-proposal
 break: true
 fastfail: false
 indent: 4
@@ -16,18 +16,7 @@ src/preamble:
         MatchFileFragment --fragment "Proposal Title" --count 0 --exact
 src:
     SeniorThesisProposal.tex:
-        CountFileWords --count 1100
+        # CountFileWords --count 1100
         ConfirmFileExists
         MatchFileFragment --fragment "input{preamble/mydefinitions}" --count 1 --exact
-        MatchFileFragment --fragment "section" --count 6
-        MatchFileFragment --fragment "bibliography{preamble/bibliography}" --count 1 --exact
-        MatchFileFragment --fragment "includegraphics" --count 2
-        MatchFileFragment --fragment "begin{itemize}" --count 1
-        MatchFileFragment --fragment "end{itemize}" --count 1
-        MatchFileFragment --fragment "begin{enumerate}" --count 1
-        MatchFileFragment --fragment "end{enumerate}" --count 1
-        MatchFileFragment --fragment "begin{verbatim}" --count 1
-        MatchFileFragment --fragment "end{verbatim}" --count 1
-        MatchFileFragment --fragment "textbf{" --count 1
-        MatchFileFragment --fragment "emph{" --count 1
-CountCommits --count 1
+CountCommits --count 10
